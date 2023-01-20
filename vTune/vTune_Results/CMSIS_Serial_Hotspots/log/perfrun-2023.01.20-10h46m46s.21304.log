@@ -1,0 +1,11 @@
+71 [17440] INFO perfrun.launcher <> - Launcher main begin
+76 [17440] INFO perfrun.launcher <> - MessageCatalogInit finished
+76 [17440] INFO perfrun.launcher <> - Launcher instance created
+76 [17440] INFO perfrun.launcher <> - argc = 9; cmdline = C:\Program Files (x86)\Intel\oneAPI\vtune\latest\bin64\amplxe-runss.exe --ui-output-format xml --ui-output-fd 940 -r C:\Users\ajayv\Documents\projects\UNI\22WSD530-Programming-Multi-many-core-Systems-Coursework-2\vTune_Results\r004hs --command stop 
+100 [17440] INFO perfrun.launcher <> - New signal handler callback was added
+204 [17440] INFO perfrun.launcher <> - create msngr2::ICliToolContext
+204 [17440] INFO perfrun.launcher <> - create file finder object
+204 [17440] INFO perfrun.launcher <> - open the result directory: pattern = C:\Users\ajayv\Documents\projects\UNI\22WSD530-Programming-Multi-many-core-Systems-Coursework-2\vTune_Results\r004hs
+207 [17440] INFO perfrun.launcher <> - RpcClient: IP address = 127.0.0.1; port = 4294955389
+943 [17440] INFO perfrun.launcher <> - Application exit code: 0
+943 [17440] INFO perfrun.launcher <> - Exit code: 0

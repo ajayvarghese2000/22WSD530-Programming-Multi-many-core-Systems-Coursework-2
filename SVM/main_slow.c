@@ -4,6 +4,9 @@
 // OpenMP
 #include <omp.h>
 
+// Used to measure program execution time
+#include <time.h>
+
 float set_vers_svs[ 16 ][2] = {
         { 1.9 ,  0.2 },
         { 3.3 ,  1.0 },
@@ -63,14 +66,21 @@ float versi_virg_bias =  10.54 ;
 float svm_compute(float sample[], int n_svs, float svs[][2], float alphas[], float bias){
 	
 	int i = 0;
-	float acc_sum = 0;
+	float acc_sums[n_svs];
 
-	#pragma omp parallel for private(i) reduction(+:acc_sum)
+	#pragma omp parallel for private(i) // The use of a reduction clause cause errors when summing floats
     for(i = 0 ; i < n_svs ; i++){
 
-        acc_sum += ((sample[0] * svs[i][0] + sample[1]*svs[i][1])*alphas[i]);
+        acc_sums[n_svs] += ((sample[0] * svs[i][0] + sample[1]*svs[i][1])*alphas[i]);
 
     }
+
+    float acc_sum = 0;
+    for (int j = 0; j < n_svs; j++)
+    {
+        acc_sum += acc_sums[j];
+    }
+    
 
 	return acc_sum + bias;
 }
@@ -275,20 +285,32 @@ final_classes_t classify(float vals[]){
 
 int main(){
 
-    float results[3];
+    // Start timer
+    struct timespec start, finish;
+    clock_gettime( CLOCK_REALTIME, &start );
+
+    float results[150][3];
+    final_classes_t final_class[150];
 	for(int i = 0 ; i < 150 ; i++){
 		
-        results[0] = svm_compute(samples[i], 2, set_vers_svs, set_vers_alphas, set_vers_bias);
-        results[1] = svm_compute(samples[i], 2, set_virg_svs, set_virg_alphas, set_virg_bias);
-        results[2] = svm_compute(samples[i], 16, versi_virg_svs, versi_virg_alphas, versi_virg_bias);
-
-        printf("%3d: ", i);
-		printf("%5f, ", results[0]);
-		printf("%5f, ", results[1]);
-		printf("%5f\n", results[2]);
-        printf("Final class -> %d\n", classify(results));
+        results[i][0] = svm_compute(samples[i], 2, set_vers_svs, set_vers_alphas, set_vers_bias);
+        results[i][1] = svm_compute(samples[i], 2, set_virg_svs, set_virg_alphas, set_virg_bias);
+        results[i][2] = svm_compute(samples[i], 16, versi_virg_svs, versi_virg_alphas, versi_virg_bias);
+        final_class[i] = classify(results[i]);
 	
 	}
-	
+
+    // For loop to print results
+    for(int i = 0 ; i < 150 ; i++)
+    {
+        printf("%3d: ", i);
+		printf("%5f, ", results[i][0]);
+		printf("%5f, ", results[i][1]);
+		printf("%5f\n", results[i][2]);
+        printf("Final class -> %d\n", final_class[i]);
+    }
+
+    clock_gettime(CLOCK_REALTIME, &finish);
+    printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
 
 }

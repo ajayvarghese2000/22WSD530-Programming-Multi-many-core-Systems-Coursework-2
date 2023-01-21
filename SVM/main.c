@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Used to measure program execution time
+#include <time.h>
+
 float set_vers_svs[ 16 ][2] = {
         { 1.9 ,  0.2 },
         { 3.3 ,  1.0 },
@@ -271,6 +274,10 @@ final_classes_t classify(float vals[]){
 
 int main(){
 
+    // Start timer
+    struct timespec start, finish;
+    clock_gettime( CLOCK_REALTIME, &start );
+
     float results[3];
 	for(int i = 0 ; i < 150 ; i++){
 		
@@ -286,5 +293,7 @@ int main(){
 	
 	}
 	
+    clock_gettime(CLOCK_REALTIME, &finish);
+    printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
 
 }

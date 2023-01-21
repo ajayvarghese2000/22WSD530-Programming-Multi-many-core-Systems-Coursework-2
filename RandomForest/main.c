@@ -25,6 +25,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// Used to measure program execution time
+#include <time.h>
+
 //
 // node in decision tree
 //
@@ -370,59 +373,67 @@ float motherFucking3dVec[10][10][6] = {
 int main(void)
 {
 
-  int rows = 151-1;
-  int cols = 6;
+    // Start timer
+    struct timespec start, finish;
+    clock_gettime( CLOCK_REALTIME, &start );
 
-  // dimensions of csv file
-  int n_estimators = 10; // n_estimators = number of trees in the foreset
-  //int rowsTree = 8-1;
-  int colsTree = 6;
-  // float* maxNodesTree = malloc(n_estimators * sizeof(float));
-  float maxNodesTree[10] = {3, 5, 5, 10, 4, 8, 7, 5, 7, 7};
+    int rows = 151-1;
+    int cols = 6;
 
-  // total number of rows
-  int totalRows = 0;
-  //  int maxMaxNodesTree = 10;
-  int i;
+    // dimensions of csv file
+    int n_estimators = 10; // n_estimators = number of trees in the foreset
+    //int rowsTree = 8-1;
+    int colsTree = 6;
+    // float* maxNodesTree = malloc(n_estimators * sizeof(float));
+    float maxNodesTree[10] = {3, 5, 5, 10, 4, 8, 7, 5, 7, 7};
 
-  for (i=0; i<n_estimators; i++) {
- 	  totalRows = maxNodesTree[i] + totalRows;
-  }
+    // total number of rows
+    int totalRows = 0;
+    //  int maxMaxNodesTree = 10;
+    int i;
 
-
-  // allocate space in memory to load all csvs
-  float*** treeRF = create_array_3d(maxNodesTree,colsTree,n_estimators,totalRows);
-  int k;
-  // read data into memory
-  for(k = 0; k < n_estimators; k++){
- 	 read_data_3d(motherFucking3dVec, treeRF, maxNodesTree, colsTree, n_estimators, k);
-  }
-
-  struct Node** rf = fit_model(motherFucking3dVec, n_estimators);
-
-  double accuracy;
-  float sample[6];
-  float predictions[10];
-  char send_string[300];
-
-
-  for(int j = 0 ; j < 75 ; j++)
-  {
-    printf("%d ->", j);
-
-    for(i=0; i < 4; i++){
-      printf("%f, ", test_data[j][i]);
+    for (i=0; i<n_estimators; i++) {
+        totalRows = maxNodesTree[i] + totalRows;
     }
 
-    printf(" -> ");
 
-  	for(i=0; i < n_estimators; i++)
-  	{
-  		predictions[i] = predict(rf[i], test_data[j]);
-  		printf("%.5f,", predictions[i]);
-  	}
-    printf("-> %f \n", majority_vote_predict(predictions, n_estimators));
-  }
+    // allocate space in memory to load all csvs
+    float*** treeRF = create_array_3d(maxNodesTree,colsTree,n_estimators,totalRows);
+    int k;
+    // read data into memory
+    for(k = 0; k < n_estimators; k++){
+        read_data_3d(motherFucking3dVec, treeRF, maxNodesTree, colsTree, n_estimators, k);
+    }
+
+    struct Node** rf = fit_model(motherFucking3dVec, n_estimators);
+
+    double accuracy;
+    float sample[6];
+    float predictions[10];
+    char send_string[300];
+
+
+    for(int j = 0 ; j < 75 ; j++)
+    {
+        printf("%d ->", j);
+
+        for(i=0; i < 4; i++){
+        printf("%f, ", test_data[j][i]);
+        }
+
+        printf(" -> ");
+
+        for(i=0; i < n_estimators; i++)
+        {
+            predictions[i] = predict(rf[i], test_data[j]);
+            printf("%.5f,", predictions[i]);
+        }
+        printf("-> %f \n", majority_vote_predict(predictions, n_estimators));
+    }
+
+    clock_gettime(CLOCK_REALTIME, &finish);
+    printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+
 }
 
 //

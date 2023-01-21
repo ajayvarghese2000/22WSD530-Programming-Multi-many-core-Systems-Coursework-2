@@ -95,6 +95,9 @@
 #include "arm_nnfunctions.h"
 #include "arm_nnexamples_cifar10_inputs.h"
 
+// OMP setup
+#include <omp.h>
+
 // Used to measure program execution time
 #include <time.h>
 
@@ -137,13 +140,16 @@ int main()
     /* input pre-processing */
     int mean_data[3] = INPUT_MEAN_SHIFT;
     unsigned int scale_data[3] = INPUT_RIGHT_SHIFT;
-    for (int i=0;i<32*32*3; i+=3) {
-    img_buffer2[i] =   (q7_t)__SSAT( ((((int)image_data[i]   - mean_data[0])<<7) + (0x1<<(scale_data[0]-1)))
-                            >> scale_data[0], 8);
-    img_buffer2[i+1] = (q7_t)__SSAT( ((((int)image_data[i+1] - mean_data[1])<<7) + (0x1<<(scale_data[1]-1)))
-                            >> scale_data[1], 8);
-    img_buffer2[i+2] = (q7_t)__SSAT( ((((int)image_data[i+2] - mean_data[2])<<7) + (0x1<<(scale_data[2]-1)))
-                            >> scale_data[2], 8);
+
+    #pragma omp parallel for
+    for (int i=0;i<32*32*3; i+=3) 
+    {
+        img_buffer2[i] =   (q7_t)__SSAT( ((((int)image_data[i]   - mean_data[0])<<7) + (0x1<<(scale_data[0]-1)))
+                                >> scale_data[0], 8);
+        img_buffer2[i+1] = (q7_t)__SSAT( ((((int)image_data[i+1] - mean_data[1])<<7) + (0x1<<(scale_data[1]-1)))
+                                >> scale_data[1], 8);
+        img_buffer2[i+2] = (q7_t)__SSAT( ((((int)image_data[i+2] - mean_data[2])<<7) + (0x1<<(scale_data[2]-1)))
+                                >> scale_data[2], 8);
     }
 
     // conv1 img_buffer2 -> img_buffer1
@@ -276,7 +282,7 @@ int main()
 // int main()
 // {
 //     // For loop that runs the CNN
-//     for (int i = 0; i < 20000; i++)
+//     for (int i = 0; i < 10000; i++)
 //     {
 //         // Run the CNN
 //         p_main();

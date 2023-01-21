@@ -242,7 +242,7 @@ arm_convolve_HWC_q7_RGB(const q7_t * Im_in,
         return ARM_MATH_SIZE_MISMATCH;
     }
     
-    #pragma omp parallel for collapse(3) private(i,j,k,m,n,in_row,in_col) reduction(+:conv_out)
+    #pragma omp parallel for collapse(3) private(i,j,k,l,m,n,in_row,in_col) reduction(+:conv_out)
     for (i = 0; i < ch_im_out; i++)
     {
         for (j = 0; j < dim_im_out; j++)

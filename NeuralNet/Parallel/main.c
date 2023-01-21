@@ -59,6 +59,9 @@
 // OpenMP
 #include <omp.h>
 
+// Used to measure program execution time
+#include <time.h>
+
 typedef struct linked_list linked_list_t;
 
 
@@ -123,6 +126,10 @@ int classify (double *results, int size_results){
 
 int main(void)
 {
+
+    // Start timer
+    struct timespec start, finish;
+    clock_gettime( CLOCK_REALTIME, &start );
 
 //
     int i;
@@ -331,6 +338,9 @@ int main(void)
     }
 
 /* USER CODE END */
+
+    clock_gettime(CLOCK_REALTIME, &finish);
+    printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
 
     return 0;
 }

@@ -95,6 +95,9 @@
 #include "arm_nnfunctions.h"
 #include "arm_nnexamples_cifar10_inputs.h"
 
+// Used to measure program execution time
+#include <time.h>
+
 // include the input and weights
 
 static q7_t conv1_wt[CONV1_IM_CH * CONV1_KER_DIM * CONV1_KER_DIM * CONV1_OUT_CH] = CONV1_WT;
@@ -120,6 +123,10 @@ q7_t      scratch_buffer[32 * 32 * 10 * 4];
 
 int main()
 {
+
+    // Start timer
+    struct timespec start, finish;
+    clock_gettime( CLOCK_REALTIME, &start );
 
     printf("Startup\n");
     /* start the execution */
@@ -260,5 +267,8 @@ int main()
     }
     printf("Application end!\n");
 
-return 0;
+    clock_gettime(CLOCK_REALTIME, &finish);
+    printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+
+    return 0;
 }

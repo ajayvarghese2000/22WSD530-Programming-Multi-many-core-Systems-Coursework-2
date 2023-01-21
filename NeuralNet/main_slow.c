@@ -56,6 +56,9 @@
 #include <math.h>
 #include <stdio.h>
 
+// OpenMP
+#include <omp.h>
+
 // Used to measure program execution time
 #include <time.h>
 
@@ -104,6 +107,7 @@ int classify (double *results, int size_results){
     double final_score = *results;
     int i;
 
+    #pragma omp parallel for private(i)
     for(i = 1 ; i < size_results ; i++){
 
         if(results[i] > final_score){
@@ -326,10 +330,12 @@ int main(void)
       {149,5.9,3.0,5.1,1.8,2.0}
   };
 
-    double *result;
+    
     for(i = 0 ; i < 150 ; i++){
+        double *result;
         result = neural_net_run(neural_net, test_data[i] + 1, 4);
-        printf("%lf %lf %lf -> %d\n", *result, result[1], result[2], classify(result, 3));
+        int class = classify(result, 3);
+        printf("%lf %lf %lf -> %d\n", *result, result[1], result[2], class);
         
         free(result);
     }
@@ -405,8 +411,10 @@ double _activation_func(double val){
 double _neuron_evaluate(neuron_t* neuron, double *data){
 
     int i;
-    double result;
-    for(i = 0, result = 0 ; i <  neuron->n_weights ; i++){
+    double result = 0;
+    #pragma omp parallel for reduction(+:result) private(i)
+    for(i = 0; i <  neuron->n_weights ; i++)
+    {
 
         result += neuron->weights[i] * data[i];
 
@@ -421,38 +429,33 @@ double * neural_net_run(neural_net_t* neural_net, double *data, int len){
 
     layer_t *layer;
     neuron_t *neuron;
-    int i;
-    double result;
-    double *prev_outputs = (double *)malloc(sizeof(double)*len);
-    double *next_outputs = NULL;
     
     linked_list_start_iterator(neural_net->layers);
 
-    
-    memcpy(prev_outputs, data, sizeof(double)*len);
+    for(int i = 0; i < linked_list_length(neural_net->layers); i++)
+    {
 
-    while(layer = linked_list_get_next(neural_net->layers)){
-
+        layer = linked_list_get_next(neural_net->layers);
         linked_list_start_iterator(layer->neurons);
-        result = 0;
-        next_outputs = malloc(sizeof(double) * (linked_list_length(layer->neurons)));
-//      next_outputs[linked_list_length(layer->neurons)] = layer->bias;
-        i = 0;
+        double *next_outputs = malloc(sizeof(double) * (linked_list_length(layer->neurons)));
 
-        while(neuron = linked_list_get_next(layer->neurons)){
 
-            next_outputs[i] = _neuron_evaluate(neuron, prev_outputs);
-            i++;
-
+        for(int j = 0; j < linked_list_length(layer->neurons); j++)
+        {
+            neuron = linked_list_get_next(layer->neurons);
+            next_outputs[j] = _neuron_evaluate(neuron, data);
         }
 
-        free(prev_outputs);
-        prev_outputs = next_outputs;
+        if (i != 0)
+        {
+            free(data);
+        }
+        data = next_outputs;
 
         
     }
 
-    return prev_outputs;
+    return data;
 }
 
 

@@ -56,9 +56,6 @@
 #include <math.h>
 #include <stdio.h>
 
-// OpenMP
-#include <omp.h>
-
 // Used to measure program execution time
 #include <time.h>
 
@@ -329,10 +326,12 @@ int main(void)
       {149,5.9,3.0,5.1,1.8,2.0}
   };
 
-    double *result;
+    
     for(i = 0 ; i < 150 ; i++){
+        double *result;
         result = neural_net_run(neural_net, test_data[i] + 1, 4);
-        printf("%lf %lf %lf -> %d\n", *result, result[1], result[2], classify(result, 3));
+        int class = classify(result, 3);
+        printf("%lf %lf %lf -> %d\n", *result, result[1], result[2], class);
         
         free(result);
     }
@@ -408,10 +407,8 @@ double _activation_func(double val){
 double _neuron_evaluate(neuron_t* neuron, double *data){
 
     int i;
-    double result = 0;
-    #pragma omp parallel for reduction(+:result)
-    for(i = 0; i <  neuron->n_weights ; i++)
-    {
+    double result;
+    for(i = 0, result = 0 ; i <  neuron->n_weights ; i++){
 
         result += neuron->weights[i] * data[i];
 

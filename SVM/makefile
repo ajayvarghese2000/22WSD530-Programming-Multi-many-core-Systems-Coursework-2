@@ -6,15 +6,15 @@ CFLAGS = -fopenmp
 
 # Makefile rules
 fast:
-	$(CC) $(CFLAGS) main_fast.c -o ./bin/fast.exe
+	$(CC) $(CFLAGS) main_fast.c -lm -o ./bin/fast.exe
 	@for i in {1..1}; do ./bin/fast.exe; done
 
 slow:
-	$(CC) $(CFLAGS) main_slow.c -o ./bin/slow.exe
+	$(CC) $(CFLAGS) main_slow.c -lm -o ./bin/slow.exe
 	@for i in {1..1}; do ./bin/slow.exe; done
 
 original:
-	$(CC) main.c -o ./bin/original.exe
+	$(CC) main.c -lm -o ./bin/original.exe
 	@for i in {1..1}; do ./bin/original.exe; done
 
 # End of makefile

@@ -52,6 +52,8 @@ exe::
 	$(V) $(GNG_CC) $(CFLAGS) \
 		$(SRC) \
 		$(APPINCLUDE) -o app.exe
+	
+	@for i in {1..1}; do ./app.exe; done
 
 endif
 

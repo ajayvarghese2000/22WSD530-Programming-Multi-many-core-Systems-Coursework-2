@@ -141,7 +141,7 @@ int main()
     int mean_data[3] = INPUT_MEAN_SHIFT;
     unsigned int scale_data[3] = INPUT_RIGHT_SHIFT;
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i=0;i<32*32*3; i+=3) 
     {
         img_buffer2[i] =   (q7_t)__SSAT( ((((int)image_data[i]   - mean_data[0])<<7) + (0x1<<(scale_data[0]-1)))
@@ -275,6 +275,12 @@ int main()
 
     clock_gettime(CLOCK_REALTIME, &finish);
     printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+
+    // Dump time taken to a csv file
+    FILE *fp;
+    fp = fopen("time_fast.csv", "a");
+    fprintf(fp, "%ld\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+
 
     return 0;
 }

@@ -294,6 +294,11 @@ int main(){
 	}
 	
     clock_gettime(CLOCK_REALTIME, &finish);
-    printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+    printf("%ld\r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+
+    // Dump time taken to a csv file
+    FILE *fp;
+    fp = fopen("time_original.csv", "a");
+    fprintf(fp, "%ld\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
 
 }

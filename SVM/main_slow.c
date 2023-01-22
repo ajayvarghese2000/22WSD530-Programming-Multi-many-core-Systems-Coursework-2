@@ -66,21 +66,14 @@ float versi_virg_bias =  10.54 ;
 float svm_compute(float sample[], int n_svs, float svs[][2], float alphas[], float bias){
 	
 	int i = 0;
-	float acc_sums[n_svs];
+	float acc_sum = 0;
 
-	#pragma omp parallel for private(i) // The use of a reduction clause cause errors when summing floats
+	#pragma omp parallel for private(i) reduction(+:acc_sum)
     for(i = 0 ; i < n_svs ; i++){
 
-        acc_sums[n_svs] += ((sample[0] * svs[i][0] + sample[1]*svs[i][1])*alphas[i]);
+        acc_sum += ((sample[0] * svs[i][0] + sample[1]*svs[i][1])*alphas[i]);
 
     }
-
-    float acc_sum = 0;
-    for (int j = 0; j < n_svs; j++)
-    {
-        acc_sum += acc_sums[j];
-    }
-    
 
 	return acc_sum + bias;
 }
@@ -313,4 +306,9 @@ int main(){
     clock_gettime(CLOCK_REALTIME, &finish);
     printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
 
+    // Dump time taken to a csv file
+    FILE *fp;
+    fp = fopen("time_slow.csv", "a");
+    fprintf(fp, "%ld\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+    
 }

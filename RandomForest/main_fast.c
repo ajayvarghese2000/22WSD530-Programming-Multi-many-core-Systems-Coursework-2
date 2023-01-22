@@ -411,10 +411,25 @@ int main(void)
 
     double accuracy;
     float sample[6];
-    float predictions[10];
+    float predictions[75][10];
     char send_string[300];
 
+    float answers[75];
 
+    #pragma omp parallel for 
+    for(int j = 0 ; j < 75 ; j++)
+    {
+        //#pragma omp parallel for
+        for(int i=0; i < n_estimators; i++)
+        {
+            predictions[j][i] = predict(rf[i], test_data[j]);
+        }
+
+        answers[j] = majority_vote_predict(predictions[j], n_estimators);
+
+    }
+
+    // For loop that takes the prints out of the parallel section
     for(int j = 0 ; j < 75 ; j++)
     {
         printf("%d ->", j);
@@ -426,23 +441,22 @@ int main(void)
 
         printf(" -> ");
 
-        #pragma omp parallel for
         for(i=0; i < n_estimators; i++)
         {
-            predictions[i] = predict(rf[i], test_data[j]);
-            //printf("%.5f,", predictions[i]);
+            printf("%.5f,", predictions[j][i]);
         }
 
-        for(i=0; i < n_estimators; i++)
-        {
-            printf("%.5f,", predictions[i]);
-        }
-
-        printf("-> %f \n", majority_vote_predict(predictions, n_estimators));
+        printf("-> %f \n", answers[j]);
     }
+
 
     clock_gettime(CLOCK_REALTIME, &finish);
     printf("Time: %ld ns \r\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
+
+    // Dump time taken to a csv file
+    FILE *fp;
+    fp = fopen("time_fast.csv", "a");
+    fprintf(fp, "%ld\n", (finish.tv_sec - start.tv_sec) * 1000000000 + (finish.tv_nsec - start.tv_nsec));
 
 }
 
@@ -471,7 +485,7 @@ struct Node** fit_model(float treeRF[][10][6], int n_estimators)
     struct Node** trees = (struct Node**) malloc(sizeof(struct Node) * n_estimators);
     int nodeNum = 0;
     int k;
-    #pragma omp parallel for private(k)
+    //#pragma omp parallel for private(k)
     for(k=0; k<n_estimators; k++){
         printf("---------Loading tree %d ------------\n",k);
         struct Node* root = create_node();
@@ -640,7 +654,7 @@ float majority_vote_predict(float* predictions, int n_predictions)
     int ones = 0;
     int twos = 0;
     int i;
-    #pragma omp parallel for private(i) reduction(+:zeroes,ones,twos)
+    //#pragma omp parallel for private(i) reduction(+:zeroes,ones,twos)
     for(i=0; i < n_predictions; i++)
     {
         if( ((int)predictions[i]) == 0) zeroes++;

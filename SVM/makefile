@@ -5,6 +5,10 @@ CC = gcc
 CFLAGS = -fopenmp
 
 # Makefile rules
+all:
+	$(CC) main.c -lm -o ./bin/original.exe
+	$(CC) $(CFLAGS) main_fast.c -lm -o ./bin/fast.exe
+	$(CC) $(CFLAGS) main_slow.c -lm -o ./bin/slow.exe
 fast:
 	$(CC) $(CFLAGS) main_fast.c -lm -o ./bin/fast.exe
 	@for i in {1..1}; do ./bin/fast.exe; done

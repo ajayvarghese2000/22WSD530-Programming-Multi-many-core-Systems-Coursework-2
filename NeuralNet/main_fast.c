@@ -293,11 +293,10 @@ int main(void)
 
     // The classification of each row of data
     int classification[150];
-
-    #pragma omp parallel for schedule(static) private(i)
-    for(i = 0 ; i < 150 ; i++){
-
-        // Each row of data has its own neural net to classify it
+    
+    #pragma omp parallel 
+    {
+        // Each thread has its own neural net to classify it
         neural_net_t *neural_net = create_neural_net();
 
         neural_net_add_layer(neural_net);
@@ -338,15 +337,21 @@ int main(void)
         -0.8062826 , -0.69583875, -0.74578637};
         neural_net_add_neuron(neural_net, w_1_2,  8, 0.14179966);
 
-        // Run the neural net
-        double *result;
-        result = neural_net_run(neural_net, test_data[i] + 1, 4);
-        classification[i] = classify(result, 3);
+        #pragma omp for private(i)
+        for(i = 0 ; i < 150 ; i++)
+        {
 
-        // Copy the result to the result array
-        memcpy(results[i], result, sizeof(double) * 3);
-        
-        free(result);
+            // Run the neural net
+            double *result;
+            result = neural_net_run(neural_net, test_data[i] + 1, 4);
+            classification[i] = classify(result, 3);
+
+            // Copy the result to the result array
+            memcpy(results[i], result, sizeof(double) * 3);
+            
+            free(result);
+        }
+
     }
 
     // Print the results

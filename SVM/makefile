@@ -20,5 +20,9 @@ slow:
 original:
 	$(CC) main.c -lm -o ./bin/original.exe
 	@for i in {1..1}; do ./bin/original.exe; done
+run_all:
+	@for i in {1..100}; do ./bin/original.exe; done
+	@for i in {1..100}; do ./bin/fast.exe; done
+	@for i in {1..100}; do ./bin/slow.exe; done
 
 # End of makefile

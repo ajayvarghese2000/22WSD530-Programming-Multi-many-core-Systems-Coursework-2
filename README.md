@@ -18,7 +18,7 @@ The vTune folder contains the vTune profiling result for each program. The speci
 
 To view the vTune profiling results open the `.vtune`, found within the programs subfolder, with the [vTune program](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler-download.html).
 
-For further explanation of what was done in this coursework please see the `Report.pdf` file in the root directory.
+For further explanation of what was done in this coursework please see the `Report.pdf` file in the root directory this include a detailed explanation of the parallelisation changes made.
 
 ## Report Abstract
 >This paper looked at increasing the performance of machine learning models by leveraging multiple cores to execute code in parallel. It detailed how each program was parallelised and the performance impact gained or lost, giving reasons for the increase or decrease. Intel vTune was used to profile each of the learning models to list the bottlenecks in the code and identify potential areas of parallelisation. OpenMP was used to execute segments of each program on threads resulting in a parallel version. For the NN and SVM a fast and slow parallel version was created to highlight the issues with inefficient parallelisation. Overall, it was found that single threaded performance, parallelisation code efficiency, amount of data to be executed in parallel and the number of threads available were the major factors in determining the speed up that could be gained from parallelisation. Intel vTune was effective at identifying program hotspots  however, each hotspot may not be an ideal area for parallelisation and so it should be used in conjunction with a programmer's intuition and knowledge to create efficient parallel programs.

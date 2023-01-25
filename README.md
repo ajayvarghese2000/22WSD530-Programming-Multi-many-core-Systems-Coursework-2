@@ -14,6 +14,10 @@ This repository contains the code for coursework 2 for 22WSD530 Programming Mult
 
 Each program has its own README.md file that explains what it is doing and how to build/run it which can be found in their respective folders.
 
+The vTune folder contains the vTune profiling result for each program. The special binaries that were used to profile the programs are also included in the subfolder `vTune_Binaries`.
+
+To view the vTune profiling results open the `.vtune`, found within the programs subfolder, with the [vTune program](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler-download.html).
+
 For further explanation of what was done in this coursework please see the `Report.pdf` file in the root directory.
 
 ## Report Abstract

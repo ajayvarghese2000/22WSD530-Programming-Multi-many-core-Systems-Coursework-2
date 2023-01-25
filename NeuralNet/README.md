@@ -4,7 +4,7 @@
 
 <!-- If you do not have a markdown viewer please visit the flowing github link to  properly view the file in the intended format -->
 
-<!-- https://github.com/ajayvarghese2000/22WSD530-Programming-Multi-many-core-Systems-Coursework-2/ -->
+<!-- https://github.com/ajayvarghese2000/22WSD530-Programming-Multi-many-core-Systems-Coursework-2/tree/main/NeuralNet -->
 
 <!-- This GitHub will be private until after the submission deadline -->
 # Table of Contents
@@ -14,7 +14,7 @@
 - [File Structure](#file-structure)
 - [Build Instructions](#build-instructions)
     - [Prerequisites](#pre-requisites)
-    - [compiling](#compiling)
+    - [Compiling](#compiling)
     - [Running](#running)
 
 

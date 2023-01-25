@@ -66,7 +66,7 @@ This is a c program and therefore requires a c compiler. The program was develop
 
 Although the program was developed on Windows 10, it should work on any operating system that supports OpenMP and has gcc installed and callable from the terminal.
 
-If you are on windows you can obtain gcc by downloading the **MSYS2** project from [here](https://www.msys2.org/). Once installed, you can install g++ by running the following command in the MSYS2 terminal.
+If you are on windows you can obtain gcc by downloading the **MSYS2** project from [here](https://www.msys2.org/). Once installed, you can install gcc by running the following command in the MSYS2 terminal.
 
 ```
     pacman -S mingw-w64-x86_64-toolchain
